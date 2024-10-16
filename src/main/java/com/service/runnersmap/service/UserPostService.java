@@ -163,12 +163,14 @@ public class UserPostService {
     userPost.setRunningDuration(Duration.between(userPost.getActualStartTime(), LocalDateTime.now()));
     userPostRepository.save(userPost);
 
-
-
-    // post 테이블 update (모든 사용자가 도착하면 도착 처리)
-    // 만약에 사용자가 모두 도착하지 않았는데 비정상 종료처리가 되어야 한다면 그룹장이 모집글 방삭제를 해야한다.
-//    post.setArriveYn(true); // 도착여부
-//    postRepository.save(post);
+    // 미완료 러너 존재여부  -> true : 미도착, false : 도착
+    boolean existsIncompleteUser = userPostRepository.existsPostIdAndValidYnTrueAndActualEndTimeIsNull(recordDto.getPostId());
+    if(!existsIncompleteUser) {
+      // 모든 사용자가 도착하면 도착 처리(post 테이블 도착처리)
+      // 만약에 사용자가 모두 도착하지 않았는데 비정상 종료처리가 되어야 한다면 그룹장이 모집글 방삭제를 해야한다.
+      post.setArriveYn(true); // 도착여부
+      postRepository.save(post);
+    }
 
     return userPost;
   }

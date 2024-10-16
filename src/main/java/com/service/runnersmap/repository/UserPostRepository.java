@@ -36,4 +36,13 @@ public interface UserPostRepository extends JpaRepository<UserPost, UserPostPK> 
 
   @Transactional
   int deleteById_PostId(Long postId);
+
+  @Query("SELECT CASE WHEN EXISTS ( " +
+           "SELECT 1 " +
+           "FROM UserPost up " +
+           "WHERE up.id.postId = :postId " +
+           "AND up.valid_yn = true " +
+           "AND up.actualEndTime IS NULL " +
+        ") THEN true ELSE false END")
+  boolean existsPostIdAndValidYnTrueAndActualEndTimeIsNull(@Param("postId") Long postId);
 }

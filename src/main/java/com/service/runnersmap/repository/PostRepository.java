@@ -18,7 +18,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
           "FROM post p " +
           "WHERE (6371 * acos(cos(radians(:lat)) * cos(radians(p.lat)) " +
           "* cos(radians(p.lng) - radians(:lng)) " +
-          "+ sin(radians(:lat)) * sin(radians(p.lat)))) < 1 " +
+          "+ sin(radians(:lat)) * sin(radians(p.lat)))) < 2 " +
           "AND (:gender IS NULL OR p.gender = :gender) " +
           "AND (:paceMinStart IS NULL OR (p.pace_min + p.pace_sec / 60) >= :paceMinStart) " +
           "AND (:paceMinEnd IS NULL OR (p.pace_min + p.pace_sec / 60) <= :paceMinEnd) " +
@@ -26,13 +26,17 @@ public interface PostRepository extends JpaRepository<Post, Long> {
           "AND (:distanceEnd IS NULL OR p.distance <= :distanceEnd) " +
           "AND (:startDate IS NULL OR (p.start_date_time BETWEEN :startDate AND DATE_ADD(:startDate, INTERVAL 1 DAY))) " +
           "AND (:startTime IS NULL OR TIME_FORMAT(p.start_date_time, '%H%i') = :startTime) " +
-          "AND (:limitMemberCnt IS NULL OR p.limit_member_cnt = :limitMemberCnt)",
+          "AND (:limitMemberCnt IS NULL OR p.limit_member_cnt = :limitMemberCnt)" +
+          "AND p.start_date_time >= CURRENT_TIMESTAMP " +
+          "AND p.departure_yn = false " +
+          "AND p.arrive_yn = false " +
+          "ORDER BY p.start_date_time ASC ",
       countQuery =
               "SELECT COUNT(*) "+
               "FROM post p " +
               "WHERE (6371 * acos(cos(radians(:lat)) * cos(radians(p.lat)) " +
               "* cos(radians(p.lng) - radians(:lng)) " +
-              "+ sin(radians(:lat)) * sin(radians(p.lat)))) < 1 " +
+              "+ sin(radians(:lat)) * sin(radians(p.lat)))) < 2 " +
               "AND (:gender IS NULL OR p.gender = :gender) " +
               "AND (:paceMinStart IS NULL OR (p.pace_min + p.pace_sec / 60) >= :paceMinStart) " +
               "AND (:paceMinEnd IS NULL OR (p.pace_min + p.pace_sec / 60) <= :paceMinEnd) " +
@@ -40,9 +44,12 @@ public interface PostRepository extends JpaRepository<Post, Long> {
               "AND (:distanceEnd IS NULL OR p.distance <= :distanceEnd) " +
               "AND (:startDate IS NULL OR (p.start_date_time BETWEEN :startDate AND DATE_ADD(:startDate, INTERVAL 1 DAY))) "+
               "AND (:startTime IS NULL OR TIME_FORMAT(p.start_date_time, '%H%i') = :startTime) " +
-              "AND (:limitMemberCnt IS NULL OR p.limit_member_cnt = :limitMemberCnt)",
+              "AND (:limitMemberCnt IS NULL OR p.limit_member_cnt = :limitMemberCnt)" +
+              "AND p.start_date_time >= CURRENT_TIMESTAMP " +
+              "AND p.departure_yn = false " +
+              "AND p.arrive_yn = false ",
       nativeQuery = true)
-  Page<Post> findAllWithin1Km(
+  Page<Post> findAllWithin2Km(
       @Param("lat") double lat,
       @Param("lng") double lng,
       @Param("gender") String gender,

@@ -35,7 +35,7 @@ public class PostService {
   @Transactional(readOnly = true)
   public Page<Post> searchPost(PostInDto inDto, Pageable pageable) throws Exception {
 
-    return postRepository.findAllWithin1Km(
+    return postRepository.findAllWithin2Km(
         inDto.getLat(),
         inDto.getLng(),
         inDto.getGender(),
