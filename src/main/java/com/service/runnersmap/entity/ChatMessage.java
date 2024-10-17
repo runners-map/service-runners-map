@@ -25,7 +25,7 @@ public class ChatMessage {
   private Long id;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id")
+  @JoinColumn(name = "users_id")
   private User sender; // 메시지 보낸 사용자
 
   @ManyToOne(fetch = FetchType.LAZY)
